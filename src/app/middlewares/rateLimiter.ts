@@ -2,7 +2,7 @@ import rateLimit from "express-rate-limit";
 
 // General API rate limiter
 export const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 300,
   standardHeaders: true,
   legacyHeaders: false,
@@ -13,7 +13,6 @@ export const generalLimiter = rateLimit({
   },
 });
 
-// Stricter limiter for auth endpoints (login/register) to prevent brute force
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 20,

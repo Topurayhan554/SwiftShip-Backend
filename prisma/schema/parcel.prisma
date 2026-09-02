@@ -1,0 +1,46 @@
+model Parcel {
+  id         String @id @default(uuid())
+  trackingId String @unique
+
+  senderId String
+  sender   User   @relation("SenderParcels", fields: [senderId], references: [id])
+
+  courierId String?
+  courier   User?   @relation("CourierParcels", fields: [courierId], references: [id])
+
+  parcelType  ParcelType @default(PACKAGE)
+  description String?
+  weightKg    Float
+  fee         Float
+
+  pickupAddress String
+  pickupLat     Float?
+  pickupLng     Float?
+
+  deliveryAddress String
+  deliveryLat     Float?
+  deliveryLng     Float?
+
+  receiverName  String
+  receiverPhone String
+
+  status ParcelStatus @default(PENDING)
+
+  estimatedDelivery DateTime?
+  actualDelivery    DateTime?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // soft delete
+
+  // Relations
+  payment    Payment?
+  statusLogs ParcelStatusLog[]
+  review     Review?
+
+  @@index([status])
+  @@index([senderId])
+  @@index([courierId])
+  @@index([createdAt])
+  @@map("parcels")
+}

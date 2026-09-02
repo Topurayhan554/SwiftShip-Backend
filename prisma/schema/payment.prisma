@@ -1,0 +1,23 @@
+model Payment {
+  id       String @id @default(uuid())
+  parcelId String @unique
+  parcel   Parcel @relation(fields: [parcelId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  amount  Float
+  gateway PaymentGateway
+  status  PaymentStatus  @default(PENDING)
+
+  transactionId String? @unique
+  sessionId     String?
+
+  paidAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([status])
+  @@index([userId])
+  @@map("payments")
+}

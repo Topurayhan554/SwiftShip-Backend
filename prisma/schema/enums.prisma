@@ -1,0 +1,47 @@
+enum Role {
+  CUSTOMER
+  COURIER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+  DELETED
+}
+
+enum AuthProvider {
+  CREDENTIALS
+  GOOGLE
+}
+
+enum ParcelStatus {
+  PENDING
+  APPROVED
+  ASSIGNED
+  PICKED_UP
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+  FAILED
+}
+
+enum ParcelType {
+  DOCUMENT
+  PACKAGE
+  FRAGILE
+  ELECTRONICS
+  OTHER
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum PaymentGateway {
+  STRIPE
+  BKASH
+}

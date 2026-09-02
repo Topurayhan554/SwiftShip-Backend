@@ -1,7 +1,7 @@
-import { Server } from "http";
+import type { Server } from "http";
 import app from "./app";
-import env from "./config/env";
-import prisma from "./config/prisma";
+import config from "./app/config";
+import { prisma } from "./app/lib/prisma";
 
 let server: Server;
 
@@ -10,10 +10,10 @@ async function main() {
     await prisma.$connect();
     console.log("✅ Database connected successfully");
 
-    server = app.listen(env.PORT, () => {
-      console.log(`🚀 Courier & Logistics API running on port ${env.PORT}`);
+    server = app.listen(config.port, () => {
+      console.log(`🚀 SwiftShip API running on port ${config.port}`);
       console.log(
-        `📍 Base URL: http://localhost:${env.PORT}${env.API_VERSION}`,
+        `📍 Base URL: http://localhost:${config.port}${config.api_version}`,
       );
     });
   } catch (err) {
@@ -24,7 +24,6 @@ async function main() {
 
 main();
 
-// Graceful shutdown & crash safety
 process.on("unhandledRejection", (err) => {
   console.error("Unhandled Rejection detected, shutting down...", err);
   if (server) {

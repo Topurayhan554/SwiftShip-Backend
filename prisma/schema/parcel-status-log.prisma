@@ -1,0 +1,13 @@
+model ParcelStatusLog {
+  id          String       @id @default(uuid())
+  parcelId    String
+  parcel      Parcel       @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+  status      ParcelStatus
+  note        String?
+  changedById String
+  changedBy   User         @relation(fields: [changedById], references: [id])
+  createdAt   DateTime     @default(now())
+
+  @@index([parcelId])
+  @@map("parcel_status_logs")
+}

@@ -1,0 +1,35 @@
+model User {
+  id              String       @id @default(uuid())
+  name            String
+  email           String       @unique
+  password        String? 
+  phone           String?      @unique
+  role            Role         @default(CUSTOMER)
+  status          UserStatus   @default(ACTIVE)
+  authProvider    AuthProvider @default(CREDENTIALS)
+  googleId        String?      @unique
+  profileImage    String?
+  isEmailVerified Boolean      @default(false)
+
+  // Courier-specific fields
+  vehicleType   String?
+  licenseNumber String?
+  isAvailable   Boolean @default(true)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? 
+
+  // Relations
+  sentParcels     Parcel[]          @relation("SenderParcels")
+  assignedParcels Parcel[]          @relation("CourierParcels")
+  payments        Payment[]
+  statusLogs      ParcelStatusLog[]
+  auditLogs       AuditLog[]
+  refreshTokens   RefreshToken[]
+  reviews         Review[]
+
+  @@index([role])
+  @@index([email])
+  @@map("users")
+}
