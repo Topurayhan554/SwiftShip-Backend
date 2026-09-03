@@ -2,7 +2,7 @@ model User {
   id              String       @id @default(uuid())
   name            String
   email           String       @unique
-  password        String? 
+  password        String?
   phone           String?      @unique
   role            Role         @default(CUSTOMER)
   status          UserStatus   @default(ACTIVE)
@@ -18,7 +18,7 @@ model User {
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  deletedAt DateTime? 
+  deletedAt DateTime?
 
   // Relations
   sentParcels     Parcel[]          @relation("SenderParcels")
