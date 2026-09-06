@@ -71,7 +71,7 @@ const registerUser = async (payload: IRegisterUserPayload) => {
 
   const templatePath = path.join(
     process.cwd(),
-    "src/templates/registration-user-otp.ejs",
+    "src/app/templates/registration-user-otp.ejs",
   );
 
   const templateData = {
@@ -156,7 +156,7 @@ const verifyUserEmail = async (payload: IVerifyEmailPayload) => {
 
   const templatePath = path.join(
     process.cwd(),
-    "src/templates/user-welcome-email.ejs",
+    "src/app/templates/user-welcome-email.ejs",
   );
 
   const html = await ejs.renderFile(templatePath, { name: createdUser.name });
@@ -313,10 +313,14 @@ const googleLogin = async (payload: IGoogleLoginPayload) => {
   let googleIdTokenPayload: TokenPayload | null | undefined = null;
 
   try {
+    console.log("TOKEN AUDIENCE:");
+    console.log(config.google_client_id);
     const ticket = await googleClient.verifyIdToken({
       idToken: payload.idToken,
       audience: config.google_client_id,
     });
+
+    console.log("GOOGLE TOKEN VERIFIED");
 
     googleIdTokenPayload = ticket.getPayload();
   } catch (error) {
@@ -392,7 +396,7 @@ const googleLogin = async (payload: IGoogleLoginPayload) => {
 
       const templatePath = path.join(
         process.cwd(),
-        "src/templates/user-welcome-email.ejs",
+        "src/app/templates/user-welcome-email.ejs",
       );
 
       const html = await ejs.renderFile(templatePath, { name: user.name });
@@ -481,12 +485,17 @@ const forgotPassword = async (payload: IForgotPasswordPayload) => {
 
   const templatePath = path.join(
     process.cwd(),
-    "src/templates/forgot-password.ejs",
+    "src/app/templates/forgot-password.ejs",
   );
+
+  const resetLink = `${config.cors_origin}/reset-password?email=${encodeURIComponent(isUserExist.email)}&otp=${encodeURIComponent(otp)}`;
 
   const html = await ejs.renderFile(templatePath, {
     name: isUserExist.name,
+    email: isUserExist.email,
     otp,
+    resetLink,
+
     expirationMinutes: expirationSeconds / 60,
   });
 
@@ -554,10 +563,15 @@ const resetPassword = async (payload: IResetPasswordPayload) => {
 
   const templatePath = path.join(
     process.cwd(),
-    "src/templates/reset-password-success.ejs",
+    "src/app/templates/reset-password-success.ejs",
   );
 
-  const html = await ejs.renderFile(templatePath, { name: isUserExist.name });
+  const html = await ejs.renderFile(templatePath, {
+    name: isUserExist.name,
+    email: isUserExist.email,
+    changeDate: new Date().toLocaleString(),
+    supportLink: "http://localhost:3000/support",
+  });
 
   await transporter.sendMail({
     from: config.email_sender,
