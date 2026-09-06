@@ -35,6 +35,7 @@ export type UserMinAggregateOutputType = {
   authProvider: $Enums.AuthProvider | null
   googleId: string | null
   profileImage: string | null
+  imagePublicId: string | null
   isEmailVerified: boolean | null
   vehicleType: string | null
   licenseNumber: string | null
@@ -55,6 +56,7 @@ export type UserMaxAggregateOutputType = {
   authProvider: $Enums.AuthProvider | null
   googleId: string | null
   profileImage: string | null
+  imagePublicId: string | null
   isEmailVerified: boolean | null
   vehicleType: string | null
   licenseNumber: string | null
@@ -75,6 +77,7 @@ export type UserCountAggregateOutputType = {
   authProvider: number
   googleId: number
   profileImage: number
+  imagePublicId: number
   isEmailVerified: number
   vehicleType: number
   licenseNumber: number
@@ -97,6 +100,7 @@ export type UserMinAggregateInputType = {
   authProvider?: true
   googleId?: true
   profileImage?: true
+  imagePublicId?: true
   isEmailVerified?: true
   vehicleType?: true
   licenseNumber?: true
@@ -117,6 +121,7 @@ export type UserMaxAggregateInputType = {
   authProvider?: true
   googleId?: true
   profileImage?: true
+  imagePublicId?: true
   isEmailVerified?: true
   vehicleType?: true
   licenseNumber?: true
@@ -137,6 +142,7 @@ export type UserCountAggregateInputType = {
   authProvider?: true
   googleId?: true
   profileImage?: true
+  imagePublicId?: true
   isEmailVerified?: true
   vehicleType?: true
   licenseNumber?: true
@@ -230,6 +236,7 @@ export type UserGroupByOutputType = {
   authProvider: $Enums.AuthProvider
   googleId: string | null
   profileImage: string | null
+  imagePublicId: string | null
   isEmailVerified: boolean
   vehicleType: string | null
   licenseNumber: string | null
@@ -271,6 +278,7 @@ export type UserWhereInput = {
   authProvider?: Prisma.EnumAuthProviderFilter<"User"> | $Enums.AuthProvider
   googleId?: Prisma.StringNullableFilter<"User"> | string | null
   profileImage?: Prisma.StringNullableFilter<"User"> | string | null
+  imagePublicId?: Prisma.StringNullableFilter<"User"> | string | null
   isEmailVerified?: Prisma.BoolFilter<"User"> | boolean
   vehicleType?: Prisma.StringNullableFilter<"User"> | string | null
   licenseNumber?: Prisma.StringNullableFilter<"User"> | string | null
@@ -298,6 +306,7 @@ export type UserOrderByWithRelationInput = {
   authProvider?: Prisma.SortOrder
   googleId?: Prisma.SortOrderInput | Prisma.SortOrder
   profileImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  imagePublicId?: Prisma.SortOrderInput | Prisma.SortOrder
   isEmailVerified?: Prisma.SortOrder
   vehicleType?: Prisma.SortOrderInput | Prisma.SortOrder
   licenseNumber?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -328,6 +337,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   authProvider?: Prisma.EnumAuthProviderFilter<"User"> | $Enums.AuthProvider
   profileImage?: Prisma.StringNullableFilter<"User"> | string | null
+  imagePublicId?: Prisma.StringNullableFilter<"User"> | string | null
   isEmailVerified?: Prisma.BoolFilter<"User"> | boolean
   vehicleType?: Prisma.StringNullableFilter<"User"> | string | null
   licenseNumber?: Prisma.StringNullableFilter<"User"> | string | null
@@ -355,6 +365,7 @@ export type UserOrderByWithAggregationInput = {
   authProvider?: Prisma.SortOrder
   googleId?: Prisma.SortOrderInput | Prisma.SortOrder
   profileImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  imagePublicId?: Prisma.SortOrderInput | Prisma.SortOrder
   isEmailVerified?: Prisma.SortOrder
   vehicleType?: Prisma.SortOrderInput | Prisma.SortOrder
   licenseNumber?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -381,6 +392,7 @@ export type UserScalarWhereWithAggregatesInput = {
   authProvider?: Prisma.EnumAuthProviderWithAggregatesFilter<"User"> | $Enums.AuthProvider
   googleId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   profileImage?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  imagePublicId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   isEmailVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   vehicleType?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   licenseNumber?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -401,6 +413,7 @@ export type UserCreateInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -428,6 +441,7 @@ export type UserUncheckedCreateInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -455,6 +469,7 @@ export type UserUpdateInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -482,6 +497,7 @@ export type UserUncheckedUpdateInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -509,6 +525,7 @@ export type UserCreateManyInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -529,6 +546,7 @@ export type UserUpdateManyMutationInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -549,6 +567,7 @@ export type UserUncheckedUpdateManyInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -579,6 +598,7 @@ export type UserCountOrderByAggregateInput = {
   authProvider?: Prisma.SortOrder
   googleId?: Prisma.SortOrder
   profileImage?: Prisma.SortOrder
+  imagePublicId?: Prisma.SortOrder
   isEmailVerified?: Prisma.SortOrder
   vehicleType?: Prisma.SortOrder
   licenseNumber?: Prisma.SortOrder
@@ -599,6 +619,7 @@ export type UserMaxOrderByAggregateInput = {
   authProvider?: Prisma.SortOrder
   googleId?: Prisma.SortOrder
   profileImage?: Prisma.SortOrder
+  imagePublicId?: Prisma.SortOrder
   isEmailVerified?: Prisma.SortOrder
   vehicleType?: Prisma.SortOrder
   licenseNumber?: Prisma.SortOrder
@@ -619,6 +640,7 @@ export type UserMinOrderByAggregateInput = {
   authProvider?: Prisma.SortOrder
   googleId?: Prisma.SortOrder
   profileImage?: Prisma.SortOrder
+  imagePublicId?: Prisma.SortOrder
   isEmailVerified?: Prisma.SortOrder
   vehicleType?: Prisma.SortOrder
   licenseNumber?: Prisma.SortOrder
@@ -751,6 +773,7 @@ export type UserCreateWithoutAuditLogsInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -777,6 +800,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -819,6 +843,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -845,6 +870,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -871,6 +897,7 @@ export type UserCreateWithoutStatusLogsInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -897,6 +924,7 @@ export type UserUncheckedCreateWithoutStatusLogsInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -939,6 +967,7 @@ export type UserUpdateWithoutStatusLogsInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -965,6 +994,7 @@ export type UserUncheckedUpdateWithoutStatusLogsInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -991,6 +1021,7 @@ export type UserCreateWithoutSentParcelsInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -1017,6 +1048,7 @@ export type UserUncheckedCreateWithoutSentParcelsInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -1048,6 +1080,7 @@ export type UserCreateWithoutAssignedParcelsInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -1074,6 +1107,7 @@ export type UserUncheckedCreateWithoutAssignedParcelsInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -1116,6 +1150,7 @@ export type UserUpdateWithoutSentParcelsInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1142,6 +1177,7 @@ export type UserUncheckedUpdateWithoutSentParcelsInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1179,6 +1215,7 @@ export type UserUpdateWithoutAssignedParcelsInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1205,6 +1242,7 @@ export type UserUncheckedUpdateWithoutAssignedParcelsInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1231,6 +1269,7 @@ export type UserCreateWithoutPaymentsInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -1257,6 +1296,7 @@ export type UserUncheckedCreateWithoutPaymentsInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -1299,6 +1339,7 @@ export type UserUpdateWithoutPaymentsInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1325,6 +1366,7 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1351,6 +1393,7 @@ export type UserCreateWithoutRefreshTokensInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -1377,6 +1420,7 @@ export type UserUncheckedCreateWithoutRefreshTokensInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -1419,6 +1463,7 @@ export type UserUpdateWithoutRefreshTokensInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1445,6 +1490,7 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1471,6 +1517,7 @@ export type UserCreateWithoutReviewsInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -1497,6 +1544,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   authProvider?: $Enums.AuthProvider
   googleId?: string | null
   profileImage?: string | null
+  imagePublicId?: string | null
   isEmailVerified?: boolean
   vehicleType?: string | null
   licenseNumber?: string | null
@@ -1539,6 +1587,7 @@ export type UserUpdateWithoutReviewsInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1565,6 +1614,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isEmailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   licenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1676,6 +1726,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   authProvider?: boolean
   googleId?: boolean
   profileImage?: boolean
+  imagePublicId?: boolean
   isEmailVerified?: boolean
   vehicleType?: boolean
   licenseNumber?: boolean
@@ -1704,6 +1755,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   authProvider?: boolean
   googleId?: boolean
   profileImage?: boolean
+  imagePublicId?: boolean
   isEmailVerified?: boolean
   vehicleType?: boolean
   licenseNumber?: boolean
@@ -1724,6 +1776,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   authProvider?: boolean
   googleId?: boolean
   profileImage?: boolean
+  imagePublicId?: boolean
   isEmailVerified?: boolean
   vehicleType?: boolean
   licenseNumber?: boolean
@@ -1744,6 +1797,7 @@ export type UserSelectScalar = {
   authProvider?: boolean
   googleId?: boolean
   profileImage?: boolean
+  imagePublicId?: boolean
   isEmailVerified?: boolean
   vehicleType?: boolean
   licenseNumber?: boolean
@@ -1753,7 +1807,7 @@ export type UserSelectScalar = {
   deletedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "phone" | "role" | "status" | "authProvider" | "googleId" | "profileImage" | "isEmailVerified" | "vehicleType" | "licenseNumber" | "isAvailable" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "phone" | "role" | "status" | "authProvider" | "googleId" | "profileImage" | "imagePublicId" | "isEmailVerified" | "vehicleType" | "licenseNumber" | "isAvailable" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sentParcels?: boolean | Prisma.User$sentParcelsArgs<ExtArgs>
   assignedParcels?: boolean | Prisma.User$assignedParcelsArgs<ExtArgs>
@@ -1789,6 +1843,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     authProvider: $Enums.AuthProvider
     googleId: string | null
     profileImage: string | null
+    imagePublicId: string | null
     isEmailVerified: boolean
     vehicleType: string | null
     licenseNumber: string | null
@@ -2236,6 +2291,7 @@ export interface UserFieldRefs {
   readonly authProvider: Prisma.FieldRef<"User", 'AuthProvider'>
   readonly googleId: Prisma.FieldRef<"User", 'String'>
   readonly profileImage: Prisma.FieldRef<"User", 'String'>
+  readonly imagePublicId: Prisma.FieldRef<"User", 'String'>
   readonly isEmailVerified: Prisma.FieldRef<"User", 'Boolean'>
   readonly vehicleType: Prisma.FieldRef<"User", 'String'>
   readonly licenseNumber: Prisma.FieldRef<"User", 'String'>

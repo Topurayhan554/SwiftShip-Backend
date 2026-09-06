@@ -7,3 +7,4 @@ logs/*.log
 .DS_Store
 coverage
 /generated/prisma
+node_modules

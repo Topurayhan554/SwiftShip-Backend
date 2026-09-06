@@ -9,6 +9,7 @@ model User {
   authProvider    AuthProvider @default(CREDENTIALS)
   googleId        String?      @unique
   profileImage    String?
+  imagePublicId   String?
   isEmailVerified Boolean      @default(false)
 
   // Courier-specific fields

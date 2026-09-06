@@ -181,6 +181,7 @@ export const UserScalarFieldEnum = {
   authProvider: 'authProvider',
   googleId: 'googleId',
   profileImage: 'profileImage',
+  imagePublicId: 'imagePublicId',
   isEmailVerified: 'isEmailVerified',
   vehicleType: 'vehicleType',
   licenseNumber: 'licenseNumber',
