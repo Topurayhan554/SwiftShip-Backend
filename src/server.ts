@@ -23,8 +23,8 @@ const main = async () => {
     await redisClient.connect();
     console.log("Redis Connected Successfully");
 
-    // await transporter.verify();
-    // console.log("Nodemailer Connected Successfully");
+    await transporter.verify();
+    console.log("Nodemailer Connected Successfully");
 
     await seedSuperAdmin();
     await seedTesterAdmin();

@@ -32,7 +32,7 @@ app.use(cookieParser());
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
-    message: "Courier & Logistics Management API is running",
+    message: "SwiftShip Management API is running",
     data: {
       version: config.api_version,
       environment: config.node_env,
