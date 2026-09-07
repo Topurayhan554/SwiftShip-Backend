@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { AuthRoutes } from "../app/modules/auth/auth.route";
 import { UserRoutes } from "../app/modules/user/user.route";
+import { ParcelRoutes } from "../app/modules/parcel/parcel.route";
 
 const router = Router();
 
@@ -20,7 +21,7 @@ interface IModuleRoute {
 const moduleRoutes: IModuleRoute[] = [
   { path: "/auth", route: AuthRoutes },
   { path: "/users", route: UserRoutes },
-  // { path: '/parcels', route: ParcelRoutes },
+  { path: "/parcels", route: ParcelRoutes },
   // { path: '/payments', route: PaymentRoutes },
   // { path: '/admin', route: AdminRoutes },
 ];
