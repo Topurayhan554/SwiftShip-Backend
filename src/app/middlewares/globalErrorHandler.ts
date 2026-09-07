@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import config from "../config";
 import { AppError } from "../utils/AppError";
-import { Prisma } from "../../../generated/prisma/client";
+import { Prisma } from "../../generated/prisma/client";
 
 interface IErrorSource {
   path?: string;

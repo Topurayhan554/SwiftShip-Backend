@@ -47,5 +47,12 @@ export default {
   smtp_user: process.env.SMTP_USER,
   smtp_password: process.env.SMTP_PASSWORD,
 
+  bkash_username: process.env.BKASH_USERNAME as string,
+  bkash_password: process.env.BKASH_PASSWORD as string,
+  bkash_app_key: process.env.BKASH_APP_KEY as string,
+  bkash_app_secret: process.env.BKASH_APP_SECRET as string,
+  bkash_base_url: process.env.BKASH_BASE_URL as string,
+  bkash_callback_url: process.env.BKASH_CALLBACK_URL as string,
+
   cors_origin: process.env.CORS_ORIGIN || "http://localhost:3000",
 };
