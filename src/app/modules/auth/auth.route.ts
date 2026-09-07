@@ -5,11 +5,13 @@ import { auth } from "../../middlewares/auth";
 import { AuthController } from "./auth.controller";
 import { UserValidation } from "./auth.validation";
 import { validatedRequest } from "../../middlewares/validateRequest";
+import { authLimiter } from "../../middlewares/rateLimiter";
 
 const router = Router();
 
 router.post(
   "/register",
+  authLimiter,
   validatedRequest(UserValidation.RegisterZodSchema),
   AuthController.registerUser,
 );
@@ -22,6 +24,7 @@ router.post(
 
 router.post(
   "/login",
+  authLimiter,
   validatedRequest(UserValidation.LoginZodSchema),
   AuthController.loginUser,
 );

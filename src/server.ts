@@ -30,7 +30,7 @@ const main = async () => {
     await seedTesterAdmin();
     await seedTesterCourier();
 
-    // await cancelStalePendingParcels();
+    await cancelStalePendingParcels();
 
     server = app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);

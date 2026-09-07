@@ -7,9 +7,10 @@ import express, {
 } from "express";
 import helmet from "helmet";
 import config from "./app/config";
-import router from "./routes/router";
-import { notFound } from "./app/middlewares/notFound";
 import { globalErrorHandler } from "./app/middlewares/globalErrorHandler";
+import { notFound } from "./app/middlewares/notFound";
+import { generalLimiter } from "./app/middlewares/rateLimiter";
+import router from "./routes/router";
 
 const app: Application = express();
 
@@ -28,6 +29,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use(generalLimiter);
+
 // Health check
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
@@ -40,13 +43,10 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-// API routes
 app.use(config.api_version, router);
 
-// 404 handler
 app.use(notFound);
 
-// Global error handler (must be last)
 app.use(globalErrorHandler);
 
 export default app;
