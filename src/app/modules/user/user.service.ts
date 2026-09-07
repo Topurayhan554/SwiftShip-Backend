@@ -5,6 +5,7 @@ import { cloudinary } from "../../lib/cloudinary";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/AppError";
 import type { IUpdateProfilePayload, IUserFilters } from "./user.interface";
+import { createAuditLog } from "../../utils/auditLog";
 
 const getMyProfile = async (userId: string) => {
   const user = await prisma.user.findUnique({
@@ -120,7 +121,7 @@ const getAllUsers = async (
   ]);
 
   return {
-    meta: { page, limit, total, totalPage: Math.ceil(total / limit) },
+    meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
     data: users,
   };
 };
@@ -147,6 +148,7 @@ const getAvailableCouriers = async () => {
 };
 
 const updateUserStatus = async (
+  actorId: string,
   userId: string,
   status: "ACTIVE" | "BLOCKED",
 ) => {
@@ -169,10 +171,19 @@ const updateUserStatus = async (
     omit: { password: true },
   });
 
+  await createAuditLog({
+    actorId,
+    action: "USER_STATUS_UPDATE",
+    entityType: "User",
+    entityId: userId,
+    meta: { previousStatus: user.status, newStatus: status },
+  });
+
   return updated;
 };
 
 const updateUserRole = async (
+  actorId: string,
   userId: string,
   newRole: "CUSTOMER" | "COURIER" | "ADMIN",
 ) => {
@@ -193,6 +204,14 @@ const updateUserRole = async (
     where: { id: userId },
     data: { role: newRole },
     omit: { password: true },
+  });
+
+  await createAuditLog({
+    actorId,
+    action: "USER_ROLE_UPDATE",
+    entityType: "User",
+    entityId: userId,
+    meta: { previousRole: user.role, newRole },
   });
 
   return updated;

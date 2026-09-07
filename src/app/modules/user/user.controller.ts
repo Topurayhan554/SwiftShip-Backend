@@ -77,7 +77,8 @@ const getAvailableCouriers = catchAsync(async (req: Request, res: Response) => {
 
 const updateUserStatus = catchAsync(async (req: Request, res: Response) => {
   const result = await UserService.updateUserStatus(
-    req.params.id,
+    req.user!.userId,
+    req.params.id as string,
     req.body.status,
   );
 
@@ -90,7 +91,11 @@ const updateUserStatus = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateUserRole = catchAsync(async (req: Request, res: Response) => {
-  const result = await UserService.updateUserRole(req.params.id, req.body.role);
+  const result = await UserService.updateUserRole(
+    req.user!.userId,
+    req.params.id as string,
+    req.body.role,
+  );
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

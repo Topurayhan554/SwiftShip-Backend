@@ -3,6 +3,7 @@ import { AuthRoutes } from "../app/modules/auth/auth.route";
 import { UserRoutes } from "../app/modules/user/user.route";
 import { ParcelRoutes } from "../app/modules/parcel/parcel.route";
 import { PaymentRoutes } from "../app/modules/payment/payment.routes";
+import { AdminRoutes } from "../app/modules/admin/admin.route";
 
 const router = Router();
 
@@ -11,20 +12,12 @@ interface IModuleRoute {
   route: Router;
 }
 
-// As each module is built, uncomment and register it here.
-// Example:
-
-// import { UserRoutes } from '../modules/user/user.routes';
-// import { ParcelRoutes } from '../modules/parcel/parcel.routes';
-// import { PaymentRoutes } from '../modules/payment/payment.routes';
-// import { AdminRoutes } from '../modules/admin/admin.routes';
-
 const moduleRoutes: IModuleRoute[] = [
   { path: "/auth", route: AuthRoutes },
   { path: "/users", route: UserRoutes },
   { path: "/parcels", route: ParcelRoutes },
   { path: "/payments", route: PaymentRoutes },
-  // { path: '/admin', route: AdminRoutes },
+  { path: "/admin", route: AdminRoutes },
 ];
 
 moduleRoutes.forEach((moduleRoute) =>
