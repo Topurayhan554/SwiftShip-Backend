@@ -120,6 +120,25 @@ const assignCourier = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const initiateBkashPayment = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user!;
+  const result = await ParcelService.initiateBkashPayment(user, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "bKash payment initiated",
+    data: result,
+  });
+});
+
+const bkashPaymentCallback = catchAsync(async (req: Request, res: Response) => {
+  const { redirectUrl } = await ParcelService.handleBkashPaymentCallback(
+    req.query,
+  );
+  res.redirect(redirectUrl);
+});
+
 export const ParcelController = {
   createParcel,
   getAllParcels,
@@ -128,4 +147,6 @@ export const ParcelController = {
   cancelParcel,
   updateParcelStatus,
   assignCourier,
+  initiateBkashPayment,
+  bkashPaymentCallback,
 };

@@ -2,6 +2,10 @@ import httpStatus from "http-status";
 import { ParcelStatus, Role } from "../../../generated/prisma/enums";
 import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/AppError";
+
+import { getBkashIdToken } from "../../lib/bkash";
+import config from "../../config";
+import { PaymentGateway, PaymentStatus } from "../../../generated/prisma/enums";
 import {
   ALLOWED_STATUS_TRANSITIONS,
   PARCEL_SEARCHABLE_FIELDS,
@@ -14,6 +18,7 @@ import type {
   IUpdateParcelStatusPayload,
 } from "./parcel.interface";
 import { calculateParcelFee, generateTrackingId } from "../../utils/parcel";
+import { RequestUser } from "../../middlewares/auth";
 
 const createParcel = async (
   senderId: string,
@@ -342,6 +347,187 @@ const assignCourier = async (id: string, payload: IAssignCourierPayload) => {
   return result;
 };
 
+const initiateBkashPayment = async (
+  user: RequestUser,
+  payload: { parcelId: string },
+) => {
+  const parcel = await prisma.parcel.findFirst({
+    where: { id: payload.parcelId, deletedAt: null },
+    include: { payment: true },
+  });
+
+  if (!parcel) {
+    throw new AppError(httpStatus.NOT_FOUND, "Parcel not found");
+  }
+
+  if (parcel.senderId !== user.userId) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You can only pay for your own parcels",
+    );
+  }
+
+  if (parcel.payment && parcel.payment.status === PaymentStatus.PAID) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "This parcel has already been paid for",
+    );
+  }
+
+  const bkashIdToken = await getBkashIdToken();
+
+  if (!bkashIdToken) {
+    throw new AppError(httpStatus.BAD_GATEWAY, "No Bkash Access Token Found!");
+  }
+
+  const bkashCreateResponse = await fetch(
+    `${config.bkash_base_url}/tokenized/checkout/create`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: bkashIdToken,
+        "X-App-Key": config.bkash_app_key,
+      },
+      body: JSON.stringify({
+        mode: "0011",
+        payerReference: user.email,
+        callbackURL: `${config.bkash_callback_url}`,
+        amount: parcel.fee.toString(),
+        currency: "BDT",
+        intent: "sale",
+        merchantInvoiceNumber: parcel.trackingId,
+      }),
+    },
+  );
+
+  const bkashCreateResult = await bkashCreateResponse.json();
+
+  if (!bkashCreateResult.paymentID) {
+    throw new AppError(
+      httpStatus.BAD_GATEWAY,
+      bkashCreateResult.statusMessage || "Failed to create bKash payment",
+    );
+  }
+
+  const payment = await prisma.payment.upsert({
+    where: { parcelId: parcel.id },
+    update: {
+      amount: parcel.fee,
+      gateway: PaymentGateway.BKASH,
+      status: PaymentStatus.PENDING,
+      sessionId: bkashCreateResult.paymentID,
+    },
+    create: {
+      parcelId: parcel.id,
+      userId: user.userId,
+      amount: parcel.fee,
+      gateway: PaymentGateway.BKASH,
+      status: PaymentStatus.PENDING,
+      sessionId: bkashCreateResult.paymentID,
+    },
+  });
+
+  return { payment, paymentUrl: bkashCreateResult.bkashURL };
+};
+
+const handleBkashPaymentCallback = async (query: Record<string, any>) => {
+  const paymentID = query.paymentID as string;
+  const status = query.status as string;
+
+  if (!paymentID) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Payment Id Missing");
+  }
+
+  const payment = await prisma.payment.findFirst({
+    where: { sessionId: paymentID },
+    include: { parcel: true },
+  });
+
+  if (!payment) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      "Payment record not found for this session",
+    );
+  }
+
+  if (status !== "success") {
+    await prisma.payment.update({
+      where: { id: payment.id },
+      data: { status: PaymentStatus.FAILED },
+    });
+
+    return {
+      redirectUrl: `${config.cors_origin}/dashboard/parcels?paymentStatus=failed`,
+    };
+  }
+
+  const bkashIdToken = await getBkashIdToken();
+
+  if (!bkashIdToken) {
+    throw new AppError(httpStatus.BAD_GATEWAY, "No Bkash Access Token Found!");
+  }
+
+  const executeResponse = await fetch(
+    `${config.bkash_base_url}/tokenized/checkout/execute`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: bkashIdToken,
+        "X-App-Key": config.bkash_app_key,
+      },
+      body: JSON.stringify({ paymentID }),
+    },
+  );
+
+  const executeResult = await executeResponse.json();
+
+  if (executeResult.transactionStatus !== "Completed") {
+    await prisma.payment.update({
+      where: { id: payment.id },
+      data: { status: PaymentStatus.FAILED },
+    });
+
+    return {
+      redirectUrl: `${config.cors_origin}/dashboard/parcels?paymentStatus=failed`,
+    };
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.payment.update({
+      where: { id: payment.id },
+      data: {
+        status: PaymentStatus.PAID,
+        transactionId: executeResult.trxID,
+        paidAt: new Date(),
+      },
+    });
+
+    if (payment.parcel.status === "PENDING") {
+      await tx.parcel.update({
+        where: { id: payment.parcel.id },
+        data: { status: "APPROVED" },
+      });
+
+      await tx.parcelStatusLog.create({
+        data: {
+          parcelId: payment.parcel.id,
+          status: "APPROVED",
+          note: "Auto-approved after successful bKash payment",
+          changedById: payment.userId,
+        },
+      });
+    }
+  });
+
+  return {
+    redirectUrl: `${config.cors_origin}/dashboard/parcels?paymentStatus=success`,
+  };
+};
+
 export const ParcelService = {
   createParcel,
   getAllParcels,
@@ -350,4 +536,6 @@ export const ParcelService = {
   cancelParcel,
   updateParcelStatus,
   assignCourier,
+  initiateBkashPayment,
+  handleBkashPaymentCallback,
 };

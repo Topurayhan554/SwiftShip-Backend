@@ -53,4 +53,11 @@ router.post(
   ParcelController.assignCourier,
 );
 
+router.post(
+  "/payment/initiate",
+  auth(Role.CUSTOMER),
+  ParcelController.initiateBkashPayment,
+);
+router.get("/bkash/callback", ParcelController.bkashPaymentCallback);
+
 export const ParcelRoutes = router;

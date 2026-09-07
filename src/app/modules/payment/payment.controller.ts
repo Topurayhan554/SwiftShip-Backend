@@ -5,33 +5,6 @@ import { sendResponse } from "../../utils/sendResponse";
 import { PaymentServices } from "./payment.service";
 import { IQuery } from "../../interfaces";
 
-const initiateBkashPayment = catchAsync(async (req: Request, res: Response) => {
-  const user = req.user!;
-  const result = await PaymentServices.initiateBkashPayment(user, req.body);
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "bKash payment initiated",
-    data: result,
-  });
-});
-
-const bkashCallback = catchAsync(async (req: Request, res: Response) => {
-  const { paymentID, status } = req.query as {
-    paymentID: string;
-    status: string;
-  };
-
-  const result = await PaymentServices.handleBkashCallback(paymentID, status);
-
-  const redirectBase = result.success
-    ? "swiftship://payment-success"
-    : "swiftship://payment-failed";
-
-  res.redirect(`${redirectBase}?paymentId=${result.payment.id}`);
-});
-
 const getMyPayments = catchAsync(async (req: Request, res: Response) => {
   const user = req.user!;
   const { data, meta } = await PaymentServices.getMyPayments(
@@ -49,7 +22,9 @@ const getMyPayments = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllPayments = catchAsync(async (req: Request, res: Response) => {
-  const { data, meta } = await PaymentServices.getAllPayments(req.query as IQuery);
+  const { data, meta } = await PaymentServices.getAllPayments(
+    req.query as IQuery,
+  );
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -74,8 +49,6 @@ const getSinglePayment = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const PaymentController = {
-  initiateBkashPayment,
-  bkashCallback,
   getMyPayments,
   getAllPayments,
   getSinglePayment,
