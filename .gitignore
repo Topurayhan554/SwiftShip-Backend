@@ -6,5 +6,5 @@ dist
 logs/*.log
 .DS_Store
 coverage
-/generated/prisma
+generated
 node_modules
