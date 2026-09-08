@@ -7,7 +7,7 @@ const CreateReviewZodSchema = z.object({
     .int()
     .min(1, "Rating must be at least 1")
     .max(5, "Rating cannot exceed 5"),
-  comment: z.string().max(500).optional(),
+  comment: z.string().max(600).optional(),
 });
 
 export const ReviewValidation = {
