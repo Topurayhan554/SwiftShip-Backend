@@ -14,7 +14,6 @@ import router from "./routes/router";
 
 const app: Application = express();
 
-// Security headers
 app.use(helmet());
 
 // CORS
@@ -31,7 +30,6 @@ app.use(cookieParser());
 
 app.use(generalLimiter);
 
-// Health check
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
