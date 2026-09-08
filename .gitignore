@@ -8,3 +8,4 @@ logs/*.log
 coverage
 src/generated/
 node_modules
+.vercel
