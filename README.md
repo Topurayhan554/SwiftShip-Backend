@@ -11,9 +11,9 @@ SwiftShip is a backend-only RESTful API for a courier and logistics management p
 | Resource | Link |
 |---|---|
 | **Live API** | https://swift-ship-backend-theta.vercel.app/ |
-| **API Documentation** | [ Add your Postman/Swagger doc link here ] |
-| **Demo Video** | [ Add your video link here ] |
-| **GitHub Repository** | [ Add your repo link here ] |
+| **API Documentation** |  https://topurayhantipu-2048213.postman.co/workspace/topurayhantipu's-Workspace~5c15b980-eb40-4f30-828a-639ad8cab5aa/collection/54681884-ced4f618-d0bd-4d25-bdd1-aad173140dd4?action=share&creator=54681884 |
+| **Demo Video** | https://drive.google.com/file/d/1i41dOWHtFj9uFG7ZTgaq_gg3fAbb3-Qu/view?usp=sharing |
+| **GitHub Repository** | https://github.com/Topurayhan554/SwiftShip-Backend |
 
 ---
 
@@ -151,8 +151,11 @@ All endpoints return a consistent structured JSON response.
 ```json
 {
   "success": true,
-  "message": "Operation successful",
-  "data": {}
+  "message": "SwiftShip Management API is running",
+  "data": {
+      "version": "/api/v1",
+      "environment": "production"
+  }
 }
 ```
 
@@ -314,7 +317,7 @@ Password: [ your seeded demo password ]
 
 ## 📹 Video Walkthrough
 
-A full API walkthrough covering architecture, all 3 roles, CRUD operations, validation/error handling, and the bKash payment flow is available here: **[ Add your demo video link ]**
+A full API walkthrough covering architecture, all 3 roles, CRUD operations, validation/error handling, and the bKash payment flow is available here: **[ https://drive.google.com/file/d/1i41dOWHtFj9uFG7ZTgaq_gg3fAbb3-Qu/view?usp=sharing ]**
 
 ---
 
