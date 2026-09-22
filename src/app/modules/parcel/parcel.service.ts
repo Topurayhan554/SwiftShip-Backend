@@ -10,6 +10,7 @@ import {
   ALLOWED_STATUS_TRANSITIONS,
   PARCEL_SEARCHABLE_FIELDS,
 } from "./parcel.constant";
+
 import type {
   IAssignCourierPayload,
   ICreateParcelPayload,
@@ -19,6 +20,8 @@ import type {
 } from "./parcel.interface";
 import { calculateParcelFee, generateTrackingId } from "../../utils/parcel";
 import { RequestUser } from "../../middlewares/auth";
+import { stripeClient } from "../../lib/stripe";
+import Stripe from "stripe";
 
 const createParcel = async (
   senderId: string,
@@ -528,6 +531,145 @@ const handleBkashPaymentCallback = async (query: Record<string, any>) => {
   };
 };
 
+const initiateStripePayment = async (
+  user: RequestUser,
+  payload: { parcelId: string },
+) => {
+  const parcel = await prisma.parcel.findFirst({
+    where: { id: payload.parcelId, deletedAt: null },
+    include: { payment: true },
+  });
+
+  if (!parcel) {
+    throw new AppError(httpStatus.NOT_FOUND, "Parcel not found");
+  }
+
+  if (parcel.senderId !== user.userId) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You can only pay for your own parcels",
+    );
+  }
+
+  if (parcel.payment && parcel.payment.status === PaymentStatus.PAID) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "This parcel has already been paid for",
+    );
+  }
+
+  const session = await stripeClient.checkout.sessions.create({
+    mode: "payment",
+    payment_method_types: ["card"],
+    line_items: [
+      {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: `Parcel Delivery - ${parcel.trackingId}`,
+          },
+          unit_amount: Math.round(Number(parcel.fee) * 100),
+        },
+        quantity: 1,
+      },
+    ],
+    customer_email: user.email,
+    success_url: `${config.cors_origin}/dashboard/parcels?paymentStatus=success`,
+    cancel_url: `${config.cors_origin}/dashboard/parcels?paymentStatus=failed`,
+    metadata: {
+      parcelId: parcel.id,
+      userId: user.userId,
+    },
+  });
+
+  const payment = await prisma.payment.upsert({
+    where: { parcelId: parcel.id },
+    update: {
+      amount: parcel.fee,
+      gateway: PaymentGateway.STRIPE,
+      status: PaymentStatus.PENDING,
+      sessionId: session.id,
+    },
+    create: {
+      parcelId: parcel.id,
+      userId: user.userId,
+      amount: parcel.fee,
+      gateway: PaymentGateway.STRIPE,
+      status: PaymentStatus.PENDING,
+      sessionId: session.id,
+    },
+  });
+
+  return { payment, paymentUrl: session.url };
+};
+
+const handleStripeWebhook = async (rawBody: Buffer, signature: string) => {
+  let event: Stripe.Event;
+
+  try {
+    event = stripeClient.webhooks.constructEvent(
+      rawBody,
+      signature,
+      config.stripe_webhook_secret as string,
+    );
+  } catch (error) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Invalid webhook signature");
+  }
+
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object as Stripe.Checkout.Session;
+
+    const payment = await prisma.payment.findFirst({
+      where: { sessionId: session.id },
+      include: { parcel: true },
+    });
+
+    if (!payment) {
+      return;
+    }
+
+    if (payment.status === PaymentStatus.PAID) {
+      return;
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.payment.update({
+        where: { id: payment.id },
+        data: {
+          status: PaymentStatus.PAID,
+          transactionId: session.payment_intent as string,
+          paidAt: new Date(),
+        },
+      });
+
+      if (payment.parcel.status === "PENDING") {
+        await tx.parcel.update({
+          where: { id: payment.parcel.id },
+          data: { status: "APPROVED" },
+        });
+
+        await tx.parcelStatusLog.create({
+          data: {
+            parcelId: payment.parcel.id,
+            status: "APPROVED",
+            note: "Auto-approved after successful Stripe payment",
+            changedById: payment.userId,
+          },
+        });
+      }
+    });
+  }
+
+  if (event.type === "checkout.session.expired") {
+    const session = event.data.object as Stripe.Checkout.Session;
+
+    await prisma.payment.updateMany({
+      where: { sessionId: session.id },
+      data: { status: PaymentStatus.FAILED },
+    });
+  }
+};
+
 export const ParcelService = {
   createParcel,
   getAllParcels,
@@ -538,4 +680,6 @@ export const ParcelService = {
   assignCourier,
   initiateBkashPayment,
   handleBkashPaymentCallback,
+  initiateStripePayment,
+  handleStripeWebhook,
 };

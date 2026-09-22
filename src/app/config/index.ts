@@ -54,5 +54,9 @@ export default {
   bkash_base_url: process.env.BKASH_BASE_URL as string,
   bkash_callback_url: process.env.BKASH_CALLBACK_URL as string,
 
+  stripe_secret_key: process.env.STRIPE_SECRET_KEY,
+  stripe_webhook_secret: process.env.STRIPE_WEBHOOK_SECRET,
+
+
   cors_origin: process.env.CORS_ORIGIN || "http://localhost:3000",
 };

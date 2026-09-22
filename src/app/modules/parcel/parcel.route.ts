@@ -60,4 +60,12 @@ router.post(
 );
 router.get("/bkash/callback", ParcelController.bkashPaymentCallback);
 
+router.post(
+  "/payment/initiate-stripe",
+  auth(Role.CUSTOMER),
+  ParcelController.initiateStripePayment,
+);
+
+router.post("/stripe/webhook", ParcelController.stripeWebhook);
+
 export const ParcelRoutes = router;

@@ -139,6 +139,28 @@ const bkashPaymentCallback = catchAsync(async (req: Request, res: Response) => {
   res.redirect(redirectUrl);
 });
 
+const initiateStripePayment = catchAsync(
+  async (req: Request, res: Response) => {
+    const user = req.user!;
+    const result = await ParcelService.initiateStripePayment(user, req.body);
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Stripe payment initiated",
+      data: result,
+    });
+  },
+);
+
+const stripeWebhook = catchAsync(async (req: Request, res: Response) => {
+  const signature = req.headers["stripe-signature"] as string;
+
+  await ParcelService.handleStripeWebhook(req.body, signature);
+
+  res.status(200).json({ received: true });
+});
+
 export const ParcelController = {
   createParcel,
   getAllParcels,
@@ -149,4 +171,6 @@ export const ParcelController = {
   assignCourier,
   initiateBkashPayment,
   bkashPaymentCallback,
+  initiateStripePayment,
+  stripeWebhook,
 };

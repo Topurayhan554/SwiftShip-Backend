@@ -24,6 +24,11 @@ app.use(
   }),
 );
 
+app.use(
+  `${config.api_version}/parcels/stripe/webhook`,
+  express.raw({ type: "application/json" }),
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
