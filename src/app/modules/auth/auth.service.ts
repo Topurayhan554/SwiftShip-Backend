@@ -23,6 +23,7 @@ import type {
   ILoginUserPayload,
   IRegisterUserPayload,
   IRequestUser,
+  IResendOtpPayload,
   IResetPasswordPayload,
   IVerifyEmailPayload,
 } from "./auth.interface";
@@ -190,6 +191,65 @@ const verifyUserEmail = async (payload: IVerifyEmailPayload) => {
   );
 
   return { user, accessToken, refreshToken };
+};
+
+const resendOtp = async (payload: IResendOtpPayload) => {
+  const email = payload.email.trim().toLowerCase();
+
+  const isUserExists = await prisma.user.findUnique({ where: { email } });
+
+  if (isUserExists) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "User with this email already exists",
+    );
+  }
+
+  const registrationDataKey = `user-registration-data:${email}`;
+  const redisUserData = await redisClient.get(registrationDataKey);
+
+  if (!redisUserData) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Registration session expired, please register again",
+    );
+  }
+
+  const registerPayload = JSON.parse(redisUserData);
+
+  const expirationSeconds = 5 * 60;
+
+  const otpKey = `user-registration-otp:${email}`;
+  const otpValue = crypto.randomInt(100000, 1000000).toString();
+
+  await redisClient.set(otpKey, otpValue, {
+    expiration: { type: "EX", value: expirationSeconds },
+  });
+
+  await redisClient.set(registrationDataKey, redisUserData, {
+    expiration: { type: "EX", value: expirationSeconds },
+  });
+
+  const templatePath = path.join(
+    process.cwd(),
+    "src/app/templates/registration-user-otp.ejs",
+  );
+
+  const templateData = {
+    name: registerPayload.name,
+    email,
+    otp: otpValue,
+    expirationMinutes: expirationSeconds / 60,
+  };
+
+  const html = await ejs.renderFile(templatePath, templateData);
+
+  await transporter.sendMail({
+    from: config.email_sender,
+    to: email,
+    subject: "Email Verification - New OTP",
+    html,
+  });
 };
 
 const loginUser = async (payload: ILoginUserPayload) => {
@@ -584,6 +644,7 @@ const resetPassword = async (payload: IResetPasswordPayload) => {
 export const AuthService = {
   registerUser,
   verifyUserEmail,
+  resendOtp,
   loginUser,
   getMe,
   refreshToken,

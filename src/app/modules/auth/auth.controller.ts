@@ -49,6 +49,19 @@ const verifyUserEmail = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const resendOtp = catchAsync(async (req: Request, res: Response) => {
+  const payload = req.body;
+
+  await AuthService.resendOtp(payload);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "OTP resent to email",
+    data: null,
+  });
+});
+
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
   const result = await AuthService.loginUser(payload);
@@ -167,6 +180,7 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
 export const AuthController = {
   registerUser,
   verifyUserEmail,
+  resendOtp,
   loginUser,
   getMe,
   refreshToken,

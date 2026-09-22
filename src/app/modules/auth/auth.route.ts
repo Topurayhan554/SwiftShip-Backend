@@ -23,6 +23,13 @@ router.post(
 );
 
 router.post(
+  "/resend-otp",
+  authLimiter,
+  validatedRequest(UserValidation.ResendOtpZodSchema),
+  AuthController.resendOtp,
+);
+
+router.post(
   "/login",
   authLimiter,
   validatedRequest(UserValidation.LoginZodSchema),
