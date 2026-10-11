@@ -36,6 +36,8 @@ router.post(
   AuthController.loginUser,
 );
 
+router.post("/logout", AuthController.logoutUser);
+
 router.get(
   "/me",
   auth(Role.ADMIN, Role.COURIER, Role.CUSTOMER, Role.SUPER_ADMIN),

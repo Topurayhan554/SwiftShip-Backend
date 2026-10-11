@@ -5,11 +5,14 @@ import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import type { IRequestUser } from "./auth.interface";
 import { AuthService } from "./auth.service";
+import config from "../../config";
+
+const isProduction = config.node_env === "production";
 
 const cookieOptions = {
   httpOnly: true,
-  secure: false,
-  sameSite: "none" as const,
+  secure: isProduction,
+  sameSite: isProduction ? ("none" as const) : ("lax" as const),
 };
 
 const registerUser = catchAsync(async (req: Request, res: Response) => {
@@ -81,6 +84,18 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     success: true,
     message: "User logged in successfully",
     data: { accessToken, refreshToken },
+  });
+});
+
+const logoutUser = catchAsync(async (req: Request, res: Response) => {
+  res.clearCookie("accessToken", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User logged out successfully",
+    data: null,
   });
 });
 
@@ -182,6 +197,7 @@ export const AuthController = {
   verifyUserEmail,
   resendOtp,
   loginUser,
+  logoutUser,
   getMe,
   refreshToken,
   googleLogin,
