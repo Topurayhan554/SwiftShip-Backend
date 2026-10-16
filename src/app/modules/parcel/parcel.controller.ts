@@ -44,6 +44,19 @@ const getAllParcels = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const trackParcel = catchAsync(async (req: Request, res: Response) => {
+  const result = await ParcelService.trackParcel(
+    req.params.trackingId as string,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Parcel tracking fetched successfully",
+    data: result,
+  });
+});
+
 const getParcelById = catchAsync(async (req: Request, res: Response) => {
   const requester = { userId: req.user!.userId, role: req.user!.role };
   const result = await ParcelService.getParcelById(
@@ -110,6 +123,7 @@ const assignCourier = catchAsync(async (req: Request, res: Response) => {
   const result = await ParcelService.assignCourier(
     req.params.id as string,
     req.body,
+    req.user!.userId,
   );
 
   sendResponse(res, {
@@ -164,6 +178,7 @@ const stripeWebhook = catchAsync(async (req: Request, res: Response) => {
 export const ParcelController = {
   createParcel,
   getAllParcels,
+  trackParcel,
   getParcelById,
   updateParcel,
   cancelParcel,

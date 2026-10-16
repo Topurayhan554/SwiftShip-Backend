@@ -23,6 +23,11 @@ import { RequestUser } from "../../middlewares/auth";
 import { stripeClient } from "../../lib/stripe";
 import Stripe from "stripe";
 
+const PAYABLE_STATUSES: ParcelStatus[] = [
+  ParcelStatus.PENDING,
+  ParcelStatus.APPROVED,
+];
+
 const createParcel = async (
   senderId: string,
   payload: ICreateParcelPayload,
@@ -102,6 +107,7 @@ const getAllParcels = async (
         courier: {
           select: { id: true, name: true, phone: true, vehicleType: true },
         },
+        payment: true,
       },
     }),
     prisma.parcel.count({ where: whereCondition }),
@@ -111,6 +117,33 @@ const getAllParcels = async (
     meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
     data: parcels,
   };
+};
+
+const trackParcel = async (trackingId: string) => {
+  const parcel = await prisma.parcel.findFirst({
+    where: { trackingId: trackingId.trim().toUpperCase(), deletedAt: null },
+    select: {
+      trackingId: true,
+      status: true,
+      parcelType: true,
+      weightKg: true,
+      pickupAddress: true,
+      deliveryAddress: true,
+      receiverName: true,
+      estimatedDelivery: true,
+      courier: { select: { name: true } },
+      statusLogs: {
+        orderBy: { createdAt: "asc" },
+        select: { status: true, note: true, createdAt: true },
+      },
+    },
+  });
+
+  if (!parcel) {
+    throw new AppError(httpStatus.NOT_FOUND, "Parcel not found");
+  }
+
+  return parcel;
 };
 
 const getParcelById = async (
@@ -221,7 +254,7 @@ const cancelParcel = async (
   const result = await prisma.$transaction(async (tx) => {
     const updated = await tx.parcel.update({
       where: { id },
-      data: { status: ParcelStatus.CANCELLED, deletedAt: new Date() },
+      data: { status: ParcelStatus.CANCELLED },
     });
 
     await tx.parcelStatusLog.create({
@@ -298,7 +331,11 @@ const updateParcelStatus = async (
   return result;
 };
 
-const assignCourier = async (id: string, payload: IAssignCourierPayload) => {
+const assignCourier = async (
+  id: string,
+  payload: IAssignCourierPayload,
+  adminId: string,
+) => {
   const parcel = await prisma.parcel.findFirst({
     where: { id, deletedAt: null },
   });
@@ -340,7 +377,7 @@ const assignCourier = async (id: string, payload: IAssignCourierPayload) => {
         parcelId: id,
         status: ParcelStatus.ASSIGNED,
         note: `Assigned to courier ${courier.name}`,
-        changedById: courier.id,
+        changedById: adminId,
       },
     });
 
@@ -367,6 +404,13 @@ const initiateBkashPayment = async (
     throw new AppError(
       httpStatus.FORBIDDEN,
       "You can only pay for your own parcels",
+    );
+  }
+
+  if (!PAYABLE_STATUSES.includes(parcel.status)) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Payment is not allowed for a parcel with this status",
     );
   }
 
@@ -455,6 +499,13 @@ const handleBkashPaymentCallback = async (query: Record<string, any>) => {
     );
   }
 
+  // Callback duibar hit hole abar execute / FAILED korbe na
+  if (payment.status === PaymentStatus.PAID) {
+    return {
+      redirectUrl: `${config.cors_origin}/dashboard/customer/parcels?paymentStatus=success`,
+    };
+  }
+
   if (status !== "success") {
     await prisma.payment.update({
       where: { id: payment.id },
@@ -462,7 +513,7 @@ const handleBkashPaymentCallback = async (query: Record<string, any>) => {
     });
 
     return {
-      redirectUrl: `${config.cors_origin}/dashboard/parcels?paymentStatus=failed`,
+      redirectUrl: `${config.cors_origin}/dashboard/customer/parcels?paymentStatus=failed`,
     };
   }
 
@@ -495,7 +546,7 @@ const handleBkashPaymentCallback = async (query: Record<string, any>) => {
     });
 
     return {
-      redirectUrl: `${config.cors_origin}/dashboard/parcels?paymentStatus=failed`,
+      redirectUrl: `${config.cors_origin}/dashboard/customer/parcels?paymentStatus=failed`,
     };
   }
 
@@ -527,7 +578,7 @@ const handleBkashPaymentCallback = async (query: Record<string, any>) => {
   });
 
   return {
-    redirectUrl: `${config.cors_origin}/dashboard/parcels?paymentStatus=success`,
+    redirectUrl: `${config.cors_origin}/dashboard/customer/parcels?paymentStatus=success`,
   };
 };
 
@@ -548,6 +599,13 @@ const initiateStripePayment = async (
     throw new AppError(
       httpStatus.FORBIDDEN,
       "You can only pay for your own parcels",
+    );
+  }
+
+  if (!PAYABLE_STATUSES.includes(parcel.status)) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Payment is not allowed for a parcel with this status",
     );
   }
 
@@ -574,8 +632,8 @@ const initiateStripePayment = async (
       },
     ],
     customer_email: user.email,
-    success_url: `${config.cors_origin}/dashboard/parcels?paymentStatus=success`,
-    cancel_url: `${config.cors_origin}/dashboard/parcels?paymentStatus=failed`,
+    success_url: `${config.cors_origin}/dashboard/customer/parcels?paymentStatus=success`,
+    cancel_url: `${config.cors_origin}/dashboard/customer/parcels?paymentStatus=failed`,
     metadata: {
       parcelId: parcel.id,
       userId: user.userId,
@@ -673,6 +731,7 @@ const handleStripeWebhook = async (rawBody: Buffer, signature: string) => {
 export const ParcelService = {
   createParcel,
   getAllParcels,
+  trackParcel,
   getParcelById,
   updateParcel,
   cancelParcel,

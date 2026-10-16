@@ -7,6 +7,8 @@ import { validatedRequest } from "../../middlewares/validateRequest";
 
 const router = Router();
 
+router.get("/track/:trackingId", ParcelController.trackParcel);
+
 router.post(
   "/",
   auth(Role.CUSTOMER),
@@ -31,6 +33,12 @@ router.patch(
   auth(Role.CUSTOMER),
   validatedRequest(ParcelValidation.UpdateParcelZodSchema),
   ParcelController.updateParcel,
+);
+
+router.patch(
+  "/:id/cancel",
+  auth(Role.CUSTOMER, Role.ADMIN, Role.SUPER_ADMIN),
+  ParcelController.cancelParcel,
 );
 
 router.delete(
