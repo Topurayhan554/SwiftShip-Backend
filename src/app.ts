@@ -12,6 +12,8 @@ import { notFound } from "./app/middlewares/notFound";
 import { generalLimiter } from "./app/middlewares/rateLimiter";
 import router from "./routes/router";
 
+import docsRouter from "./docs/docs.route";
+
 const app: Application = express();
 
 app.use(
@@ -64,6 +66,8 @@ app.get("/", (req: Request, res: Response) => {
     },
   });
 });
+
+app.use("/docs", docsRouter);
 
 app.use(config.api_version, router);
 
