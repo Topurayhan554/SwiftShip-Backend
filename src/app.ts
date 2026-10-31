@@ -14,15 +14,34 @@ import router from "./routes/router";
 
 const app: Application = express();
 
-app.use(helmet());
-
-// CORS
 app.use(
-  cors({
-    origin: config.cors_origin,
-    credentials: true,
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
   }),
 );
+
+const allowedOrigins = (config.cors_origin ?? "")
+  .split(",")
+  .map((o) => o.trim().replace(/\/+$/, ""))
+  .filter(Boolean);
+
+if (config.node_env !== "production") {
+  allowedOrigins.push("http://localhost:3000", "http://127.0.0.1:3000");
+}
+
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(null, false);
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 
 app.use(
   `${config.api_version}/parcels/stripe/webhook`,

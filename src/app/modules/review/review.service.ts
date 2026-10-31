@@ -146,10 +146,65 @@ const deleteReview = async (id: string) => {
   await prisma.review.delete({ where: { id } });
 };
 
+const getPublicReviews = async (query: Record<string, unknown>) => {
+  const page = Math.max(Number(query.page) || 1, 1);
+  const limit = Math.min(Math.max(Number(query.limit) || 6, 1), 20);
+  const rating = Number(query.rating);
+  const where = rating >= 1 && rating <= 5 ? { rating } : {};
+
+  const [rows, filteredTotal, agg, groups] = await Promise.all([
+    prisma.review.findMany({
+      where,
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        rating: true,
+        comment: true,
+        createdAt: true,
+        user: { select: { name: true } },
+      },
+    }),
+    prisma.review.count({ where }),
+    prisma.review.aggregate({ _avg: { rating: true }, _count: true }),
+    prisma.review.groupBy({ by: ["rating"], _count: { rating: true } }),
+  ]);
+
+  const distribution = [5, 4, 3, 2, 1].map((r) => ({
+    rating: r,
+    count: groups.find((g) => g.rating === r)?._count.rating ?? 0,
+  }));
+
+  return {
+    data: {
+      reviews: rows.map((r) => ({
+        id: r.id,
+        rating: r.rating,
+        comment: r.comment,
+        createdAt: r.createdAt,
+        customerName: r.user?.name?.trim().split(" ")[0] || "Customer",
+      })),
+      summary: {
+        total: agg._count,
+        average: Number((agg._avg.rating ?? 0).toFixed(1)),
+        distribution,
+      },
+    },
+    meta: {
+      page,
+      limit,
+      total: filteredTotal,
+      totalPages: Math.max(Math.ceil(filteredTotal / limit), 1),
+    },
+  };
+};
+
 export const ReviewService = {
   createReview,
   getCourierReviews,
   getMyReviews,
   getAllReviews,
+  getPublicReviews,
   deleteReview,
 };

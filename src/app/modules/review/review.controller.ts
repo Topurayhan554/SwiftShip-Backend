@@ -85,10 +85,23 @@ const deleteReview = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getPublicReviews = catchAsync(async (req: Request, res: Response) => {
+  const result = await ReviewService.getPublicReviews(req.query);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Reviews retrieved successfully",
+    data: result.data,
+    meta: result.meta,
+  });
+});
+
 export const ReviewController = {
   createReview,
   getAllReviews,
   getCourierReviews,
   getMyReviews,
+  getPublicReviews,
   deleteReview,
 };

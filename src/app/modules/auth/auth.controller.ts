@@ -7,7 +7,8 @@ import type { IRequestUser } from "./auth.interface";
 import { AuthService } from "./auth.service";
 import config from "../../config";
 
-const isProduction = config.node_env === "production";
+const isProduction =
+  config.node_env === "production" || process.env.VERCEL === "1";
 
 const cookieOptions = {
   httpOnly: true,
