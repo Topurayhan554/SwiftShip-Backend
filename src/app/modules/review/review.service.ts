@@ -113,8 +113,43 @@ const getMyReviews = async (userId: string, query: IQuery) => {
   };
 };
 
+const getAllReviews = async (query: IQuery) => {
+  const page = Number(query.page) || 1;
+  const limit = Number(query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const [data, total] = await Promise.all([
+    prisma.review.findMany({
+      skip,
+      take: limit,
+      orderBy: { createdAt: "desc" },
+      include: {
+        parcel: { select: { trackingId: true } },
+        user: { select: { id: true, name: true } },
+      },
+    }),
+    prisma.review.count(),
+  ]);
+
+  return {
+    meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    data,
+  };
+};
+const deleteReview = async (id: string) => {
+  const review = await prisma.review.findUnique({ where: { id } });
+
+  if (!review) {
+    throw new AppError(httpStatus.NOT_FOUND, "Review not found");
+  }
+
+  await prisma.review.delete({ where: { id } });
+};
+
 export const ReviewService = {
   createReview,
   getCourierReviews,
   getMyReviews,
+  getAllReviews,
+  deleteReview,
 };

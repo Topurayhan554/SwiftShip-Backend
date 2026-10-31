@@ -4,6 +4,8 @@ import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { ReviewService } from "./review.service";
 import { IQuery } from "../../interfaces";
+import { Role } from "../../../generated/prisma/enums";
+import { AppError } from "../../utils/AppError";
 
 const createReview = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user!.userId;
@@ -17,9 +19,30 @@ const createReview = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllReviews = catchAsync(async (req: Request, res: Response) => {
+  const { data, meta } = await ReviewService.getAllReviews(req.query as IQuery);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Reviews fetched successfully",
+    meta,
+    data,
+  });
+});
+
 const getCourierReviews = catchAsync(async (req: Request, res: Response) => {
+  const courierId = req.params.courierId as string;
+
+  if (req.user!.role === Role.COURIER && req.user!.userId !== courierId) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You can only view your own reviews",
+    );
+  }
+
   const { data, meta, averageRating } = await ReviewService.getCourierReviews(
-    req.params.courierId as string,
+    courierId,
     req.query as IQuery,
   );
 
@@ -51,8 +74,21 @@ const getMyReviews = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const deleteReview = catchAsync(async (req: Request, res: Response) => {
+  await ReviewService.deleteReview(req.params.id as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Review deleted successfully",
+    data: null,
+  });
+});
+
 export const ReviewController = {
   createReview,
+  getAllReviews,
   getCourierReviews,
   getMyReviews,
+  deleteReview,
 };
