@@ -373,8 +373,8 @@ const googleLogin = async (payload: IGoogleLoginPayload) => {
   let googleIdTokenPayload: TokenPayload | null | undefined = null;
 
   try {
-    console.log("TOKEN AUDIENCE:");
-    console.log(config.google_client_id);
+    // console.log("TOKEN AUDIENCE:");
+    // console.log(config.google_client_id);
     const ticket = await googleClient.verifyIdToken({
       idToken: payload.idToken,
       audience: config.google_client_id,
