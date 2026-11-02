@@ -56,6 +56,7 @@ router.post(
 
 router.post(
   "/reset-password",
+  authLimiter,
   validatedRequest(UserValidation.ResetPasswordZodSchema),
   AuthController.resetPassword,
 );
